@@ -25,7 +25,7 @@ async def index():
     return{"message": "hello daily!"}
 
 @app.get("/api/getExercise/")
-async def getExercise(id:int = "0", token:int = 0):
+async def getExercise(id:int = 0, token:int = 0):
     
     newConnection = Connection(id, token)
 
