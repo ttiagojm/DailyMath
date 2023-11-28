@@ -19,9 +19,9 @@ async def index():
     return{"message": "hello daily!"}
 
 @app.get("/api/getExercise/")
-async def getExercise(id:int = "0", isMultiple:bool = True, token:int = 0):
+async def getExercise(id:int = "0", token:int = 0):
     
-    newConnection = Connection(id, isMultiple, token)
+    newConnection = Connection(id, token)
 
     exercise = RequestExercise(newConnection, dbController)
 

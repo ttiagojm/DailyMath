@@ -1,6 +1,8 @@
-class Connection:
+from dataclasses import dataclass
 
-     def __init__ (self, id:int, isMultiple:bool, token:int):
-         self.id = id
-         self.isMultiple = isMultiple
-         self.token = token
+@dataclass
+class Connection:
+    id:int
+    token:int
+
+    
