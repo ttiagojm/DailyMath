@@ -11,7 +11,6 @@ class RequestExercise:
         self.connection = connection
         self.dbController = dbController
 
-        print("setting id")
         self.__exercise["id"] = self.connection.id
         self.setExerciseData("exercise", "exercisetable")
         self.setExerciseData("type", "exercisetable")
@@ -36,5 +35,4 @@ class RequestExercise:
         self.__exercise[requestLabel] = self.dbController.fetchone()
 
     def getResponse(self) -> dict:
-        print("Response...")
         return self.__exercise 
