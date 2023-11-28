@@ -3,12 +3,18 @@ from fastapi import FastAPI
 import psycopg2 
 from src.controllers.RequestExercise import RequestExercise
 from src.controllers.Connection import Connection
+from dotenv import load_dotenv
+from dotenv import dotenv_values
+
+load_dotenv()
 
 app = FastAPI()
 
-databaseName:str = "db"
-databaseUser:str = "postgres"
-databasePassword:str = input("type the database password: ")
+databaseConfig = dotenv_values(".env")
+
+databaseUser:str = databaseConfig["databaseUser"]
+databaseName:str = databaseConfig["databaseName"]
+databasePassword:str = databaseConfig["databasePassword"]
 
 db = psycopg2.connect(f'dbname={databaseName} user={databaseUser} password={databasePassword}')
 
