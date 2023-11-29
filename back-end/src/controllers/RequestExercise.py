@@ -33,6 +33,9 @@ class RequestExercise:
 
         self.dbController.execute('SELECT %s FROM %s WHERE id=%s;'%(rowLabel, table, self.__exercise["id"]))
         self.__exercise[requestLabel] = self.dbController.fetchone()
+        
+        if self.__exercise[requestLabel] is None:
+            self.__exercise[requestLabel] = '%s not found'%(requestLabel)
 
     def getResponse(self) -> dict:
         return self.__exercise 
