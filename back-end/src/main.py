@@ -20,7 +20,8 @@ databaseUser:str = databaseConfig["databaseUser"]
 databaseName:str = databaseConfig["databaseName"]
 databasePassword:str = databaseConfig["databasePassword"]
 
-currentDay:int = datetime.now().day
+#currentDay:int = datetime.now().day
+currentDay:int = 29
 dayExerciseId = 1
 
 
@@ -30,22 +31,32 @@ dbController = db.cursor()
 dbController.execute("SELECT COUNT(id) FROM exercisetable")
 databaseSize:int = dbController.fetchone()[0];
 
+exercise:RequestExercise = None
 
 @app.get("/")
 async def index():
     return{"message": "hello daily!"}
 
+
 @app.get("/api/getExercise/")
 async def getExercise():
 
-    newConnection = Connection(getId())
+    global exercise, currentDay
 
-    exercise = RequestExercise(newConnection, dbController)
+    newConnection = Connection(getId())    
+
+    exercise = getRequestExerciseInstance(exercise, newConnection)
 
     response = exercise.getResponse()
 
     return response
+
+def getRequestExerciseInstance(instanceController:RequestExercise, connection:Connection) -> RequestExercise:
+    if instanceController is None:
+        return RequestExercise(connection, dbController) 
+    return instanceController
      
+
 def getId() -> int:
 
     global dayExerciseId
@@ -54,16 +65,19 @@ def getId() -> int:
 
     if isAnotherDay():
         exerciseId = rand.randint(1, databaseSize)
-        dayExerciseId = exerciseId
-
+        dayExerciseId = exerciseId 
+    
     return exerciseId
+
+
 
 def isAnotherDay() -> bool:
     
-    global currentDay
+    global currentDay, exercise
 
     if datetime.now().day is not currentDay:
         currentDay = datetime.now().day;
+        exercise = None
         return True
 
     return False
