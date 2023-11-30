@@ -12,30 +12,27 @@ class RequestExercise:
         self.dbController = dbController
 
         self.__exercise["id"] = self.connection.id
-        self.setExerciseData("exercise", "exercisetable")
-        self.setExerciseData("type", "exercisetable")
-        self.setExerciseData("source", "exercisetable")
-        self.setExerciseData("id_solution", "exercisetable")
 
-        self.dbController.execute('SELECT is_multiple_choice FROM exercisetable WHERE id=%s'%(self.__exercise["id"]))
-        isMultiple = self.dbController.fetchone() 
-        
-        if isMultiple[0] == True:
-            self.setExerciseData("id", "multiple_choices", "multiple_choices_id")
-            self.setExerciseData("options", "multiple_choices")
-            
+        self.dbController.execute\
+            ('SELECT (exercise, type, source, is_multiple_choice, id_solution),\
+            (options, multiple_choices.id)\
+            FROM exercisetable, multiple_choices WHERE exercisetable.id=%s'%(self.__exercise["id"]))
+        rawQuery = dbController.fetchone();
 
+        formatedQuery = {}
+        for index, tableElement in enumerate(rawQuery):
+            formatedQuery[index] = tableElement[1:-1].split(",")
 
-    def setExerciseData(self, rowLabel:str, table:str, requestLabel:str = None):
+        self.__exercise = {
+            "id": self.connection.id,
+            "exercise": formatedQuery[0][0],
+            "type": formatedQuery[0][1],
+            "source": formatedQuery[0][2]
+        }
 
-        if requestLabel == None:
-            requestLabel = rowLabel
-
-        self.dbController.execute('SELECT %s FROM %s WHERE id=%s;'%(rowLabel, table, self.__exercise["id"]))
-        self.__exercise[requestLabel] = self.dbController.fetchone()
-        
-        if self.__exercise[requestLabel] is None:
-            self.__exercise[requestLabel] = '%s not found'%(requestLabel)
-
+        if formatedQuery[0][3] == 't':
+            self.__exercise["choices_id"] = formatedQuery[1][0]
+            self.__exercise["options"] = formatedQuery[1][1]
+   
     def getResponse(self) -> dict:
         return self.__exercise 

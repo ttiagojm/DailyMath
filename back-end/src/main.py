@@ -20,8 +20,7 @@ databaseUser:str = databaseConfig["databaseUser"]
 databaseName:str = databaseConfig["databaseName"]
 databasePassword:str = databaseConfig["databasePassword"]
 
-#currentDay:int = datetime.now().day
-currentDay:int = 29
+currentDay:int = datetime.now().day
 dayExerciseId = 1
 
 
