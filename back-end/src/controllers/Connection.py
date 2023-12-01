@@ -1,10 +1,6 @@
-from dataclasses import dataclass
+import psycopg2 
 
-@dataclass
-class Connection:
-    id:int
 
-    # TODO: discuss and implement session controller
-    token:int = 0
+from ..config import DATABASE_USER, DATABASE_NAME, DATABASE_PASSWORD
 
-    
+DB_CONNECTION = psycopg2.connect(f'dbname={DATABASE_NAME} user={DATABASE_USER} password={DATABASE_PASSWORD}')

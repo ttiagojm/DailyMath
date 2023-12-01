@@ -1,34 +1,22 @@
 import uvicorn
 from fastapi import FastAPI
-import psycopg2 
-from src.controllers.RequestExercise import RequestExercise
-from src.controllers.Connection import Connection
-from dotenv import load_dotenv
-from dotenv import dotenv_values
+from .controllers.request_exercise import RequestExercise
 from random import Random
 from datetime import datetime
-
-load_dotenv()
-databaseConfig = dotenv_values(".env")
+from .controllers.connection import DB_CONNECTION
 
 app = FastAPI()
 
 rand = Random()
 rand.seed()
 
-databaseUser:str = databaseConfig["databaseUser"]
-databaseName:str = databaseConfig["databaseName"]
-databasePassword:str = databaseConfig["databasePassword"]
+current_day:int = datetime.now().day
+day_exercise_id = 1
 
-currentDay:int = datetime.now().day
-dayExerciseId = 1
+db_controller = DB_CONNECTION.cursor()
 
-
-db = psycopg2.connect(f'dbname={databaseName} user={databaseUser} password={databasePassword}')
-dbController = db.cursor()
-
-dbController.execute("SELECT COUNT(id) FROM exercisetable")
-databaseSize:int = dbController.fetchone()[0];
+db_controller.execute("SELECT COUNT(id) FROM exercisetable")
+db_size:int = db_controller.fetchone()[0];
 
 exercise:RequestExercise = None
 
@@ -40,42 +28,38 @@ async def index():
 @app.get("/api/getExercise/")
 async def getExercise():
 
-    global exercise, currentDay
+    global exercise, current_day
 
-    newConnection = Connection(getId())    
-
-    exercise = getRequestExerciseInstance(exercise, newConnection)
+    id_exercise = get_id()
+ 
+    exercise = get_request_exercise_instance(exercise, id_exercise)
 
     response = exercise.getResponse()
 
     return response
 
-def getRequestExerciseInstance(instanceController:RequestExercise, connection:Connection) -> RequestExercise:
-    if instanceController is None:
-        return RequestExercise(connection, dbController) 
-    return instanceController
-     
+def get_request_exercise_instance(instance_controller:RequestExercise, id_exercise:int) -> RequestExercise:
+    if instance_controller is None:
+        return RequestExercise(id_exercise, db_controller) 
+    return instance_controller
 
-def getId() -> int:
+def get_id() -> int:
+    global day_exercise_id
 
-    global dayExerciseId
+    exercise_id:int = day_exercise_id
 
-    exerciseId:int = dayExerciseId
-
-    if isAnotherDay():
-        exerciseId = rand.randint(1, databaseSize)
-        dayExerciseId = exerciseId 
+    if is_another_day():
+        exercise_id = rand.randint(1, db_size)
+        day_exercise_id = exercise_id 
     
-    return exerciseId
+    return exercise_id
 
 
+def is_another_day() -> bool:
+    global current_day, exercise
 
-def isAnotherDay() -> bool:
-    
-    global currentDay, exercise
-
-    if datetime.now().day is not currentDay:
-        currentDay = datetime.now().day;
+    if datetime.now().day is not current_day:
+        current_day = datetime.now().day;
         exercise = None
         return True
 
