@@ -1,9 +1,9 @@
 import uvicorn
 from fastapi import FastAPI
-from .controllers.request_exercise import RequestExercise
+from src.controllers.Connection import RequestExercise
 from random import Random
 from datetime import datetime
-from .controllers.connection import DB_CONNECTION
+from src.controllers.Connection import DB_CONNECTION
 
 app = FastAPI()
 
@@ -16,7 +16,7 @@ day_exercise_id = 1
 db_controller = DB_CONNECTION.cursor()
 
 db_controller.execute("SELECT COUNT(id) FROM exercisetable")
-db_size:int = db_controller.fetchone()[0];
+db_size:int = db_controller.fetchone()[0]
 
 exercise:RequestExercise = None
 

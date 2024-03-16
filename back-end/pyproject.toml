@@ -1,8 +1,8 @@
 [tool.poetry]
 name = "src"
 version = "0.1.0"
-description = "um site que vai apresentar um problema matemático por dia, podendo ser este de matemática pura ou aplicada"
-authors = ["Bruna Ferreira <bferreira.slv@gmail.com>"]
+description = "Um site que vai apresentar um problema matemático por dia, podendo ser este de matemática pura ou aplicada"
+authors = ["Bruna Ferreira <bferreira.slv@gmail.com>", "Tiago Martins"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
