@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    container_name: db
+    environment:
+      - POSTGRES_USER=postgres        # You should modify this for what you have in your .env
+      - POSTGRES_PASSWORD=postgres    # You should modify this for what you have in your .env
+      - POSTGRES_DB=dailymath         # You should modify this for what you have in your .env
+    ports:
+      - '5432:5432'
+    volumes: 
+      - db:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/create_tables.sql
+volumes:
+  db:
+    driver: local
