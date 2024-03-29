@@ -4,9 +4,9 @@ services:
     restart: unless-stopped
     container_name: db
     environment:
-      - POSTGRES_USER=postgres        # You should modify this for what you have in your .env
-      - POSTGRES_PASSWORD=postgres    # You should modify this for what you have in your .env
-      - POSTGRES_DB=dailymath         # You should modify this for what you have in your .env
+      - POSTGRES_USER=postgres        # You should modify this
+      - POSTGRES_PASSWORD=postgres    # You should modify this
+      - POSTGRES_DB=dailymath         # You should modify this
     ports:
       - '5432:5432'
     volumes: 
