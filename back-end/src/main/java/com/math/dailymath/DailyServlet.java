@@ -1,6 +1,7 @@
 package com.math.dailymath;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.math.dailymath.services.ServiceExercise;
 
 import javax.servlet.ServletException;
@@ -18,7 +19,9 @@ import java.sql.SQLException;
 public class DailyServlet extends HttpServlet {
 
     // This variables are shared with all requests (thread safety can be a problem)
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder()
+                                .excludeFieldsWithoutExposeAnnotation()
+                                .create();
     private final ServiceExercise exercise = new ServiceExercise();
     Connection conn = null;
 

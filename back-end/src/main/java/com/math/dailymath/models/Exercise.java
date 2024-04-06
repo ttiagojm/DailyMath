@@ -1,12 +1,21 @@
 package com.math.dailymath.models;
 
+import com.google.gson.annotations.Expose;
+
 public class Exercise {
     private long idExercise;
+    @Expose
     private long idSolution;
+    @Expose
     private String typeExercise;
+    @Expose
     private String source;
+    @Expose
     private String exercise;
+    @Expose
     private boolean isMultiple;
+    @Expose
+    private boolean isDone;
 
     public Exercise(long idExercise, long idSolution, String typeExercise,
                     String source, String exercise, boolean isMultiple) {
@@ -65,5 +74,13 @@ public class Exercise {
 
     public void setMultiple(boolean multiple) {
         isMultiple = multiple;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
+
+    public void setDone(boolean done) {
+        isDone = done;
     }
 }
