@@ -2,6 +2,7 @@ package com.math.dailymath;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.math.dailymath.errors.ExerciseException;
 import com.math.dailymath.services.ServiceExercise;
 
 import javax.servlet.ServletException;
@@ -46,6 +47,8 @@ public class DailyServlet extends HttpServlet {
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
+
+        super.init();
     }
 
     @Override
@@ -55,10 +58,28 @@ public class DailyServlet extends HttpServlet {
         PrintWriter printWriter = resp.getWriter();
 
         // Thread Safety guaranteed
-        synchronized (this) {
-            String exerciseString = gson.toJson(exercise.getExercise(conn));
-            printWriter.print(exerciseString);
-            printWriter.close();
+        try {
+            synchronized (this) {
+                String exerciseString = gson.toJson(exercise.getExercise(conn));
+                printWriter.print(exerciseString);
+                printWriter.close();
+                resp.setStatus(200);
+            }
+        } catch (ExerciseException e){
+            resp.setStatus(e.getStatusCode());
         }
+    }
+
+    @Override
+    public void destroy() {
+
+        try {
+            this.conn.commit();
+            this.conn.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        super.destroy();
     }
 }

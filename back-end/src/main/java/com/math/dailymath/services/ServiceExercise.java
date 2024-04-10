@@ -1,10 +1,9 @@
 package com.math.dailymath.services;
 
+import com.math.dailymath.errors.ExerciseException;
 import com.math.dailymath.models.Exercise;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
@@ -17,10 +16,63 @@ public class ServiceExercise {
     private final Random rng = new Random();
 
     /**
+     * Method get daily exercise
+     * @param conn
+     * @return
+     * @throws ExerciseException
+     */
+    public Exercise getExercise(Connection conn) throws ExerciseException {
+        // Verify if the exercise needs to be changed
+        if(exercise == null || today.isBefore(LocalDate.now())) {
+            ArrayList<Exercise> exercises = generateExercise(conn);
+
+            if(exercises.isEmpty()) {
+                System.err.println("No rows selected");
+                throw new ExerciseException(500, "Server error!");
+            }
+            // Select a random exercise from 0 to last index of exercises (nextInt upper bound is exclusive)
+            int index = rng.nextInt(exercises.size());
+            exercise = exercises.get(index);
+
+            // Update Exercise as Done (selected)
+            markExerciseDone(conn, exercise);
+        }
+        return exercise;
+    }
+
+    /**
+     * Method to update exercise to be done
+     * @param conn
+     * @param ex
+     * @throws ExerciseException
+     */
+    private void markExerciseDone(Connection conn, Exercise ex) throws ExerciseException {
+        System.out.println("Marking Exercise as 'Done'!");
+        String query = "UPDATE EXERCISE SET Done=true WHERE Id_Exercise=?";
+        int affectedRows = 0;
+
+        try{
+
+            PreparedStatement pstmt = conn.prepareStatement(query);
+            pstmt.setLong(1, ex.getIdExercise());
+            affectedRows = pstmt.executeUpdate();
+
+           // Should be updated since exercises exists
+           if(affectedRows == 0)
+               throw new SQLException("Affected 0 rows");
+
+        } catch (SQLException e){
+            System.err.println(e.getMessage());
+            throw new ExerciseException(500, "Server error!");
+        }
+    }
+
+    /**
      * Method to get a new exercise from DB
      * @param conn - Database connection
+     * @return
      */
-    private void generateExercise(Connection conn){
+    private ArrayList<Exercise> generateExercise(Connection conn) throws ExerciseException {
         System.out.println("Generating Exercise!");
         String query = "SELECT * FROM EXERCISE WHERE Done=false";
         ArrayList<Exercise> exercises = new ArrayList<>();
@@ -46,21 +98,11 @@ public class ServiceExercise {
             res.close();
             stmt.close();
 
-            // Select a random exercise from 0 to last index of exercises (nextInt upper bound is exclusive)
-            int index = rng.nextInt(exercises.size());
-
-            exercise = exercises.get(index);
-
-        } catch (Exception e){
+        } catch (SQLException e){
             System.err.println(e.getMessage());
+            throw new ExerciseException(500, "Server Error!");
         }
-    }
 
-    public Exercise getExercise(Connection conn){
-        // Verify if the exercise needs to be changed
-        if(exercise == null || today.isBefore(LocalDate.now()))
-            generateExercise(conn);
-
-        return exercise;
+        return exercises;
     }
 }

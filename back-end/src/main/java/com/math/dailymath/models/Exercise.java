@@ -14,7 +14,6 @@ public class Exercise {
     private String exercise;
     @Expose
     private boolean isMultiple;
-    @Expose
     private boolean isDone;
 
     public Exercise(long idExercise, long idSolution, String typeExercise,
