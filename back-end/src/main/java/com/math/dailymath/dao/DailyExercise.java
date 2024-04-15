@@ -5,14 +5,13 @@ import com.math.dailymath.models.Exercise;
 import com.math.dailymath.models.MultipleChoice;
 import com.math.dailymath.services.ExerciseService;
 import com.math.dailymath.services.MultipleChoiceService;
-import com.math.dailymath.services.SolutionService;
 
 import java.sql.Connection;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class DailyExercise extends DaoExercise{
+public class DailyExercise extends DaoExercise {
 
     // Singleton since everyone should have the same DailyExercise
     private static DailyExercise daily;
@@ -31,7 +30,6 @@ public class DailyExercise extends DaoExercise{
             // Services needed to build a daily exercise
             ExerciseService exerciseService = new ExerciseService();
             MultipleChoiceService multipleChoiceService = new MultipleChoiceService();
-            SolutionService solutionService = new SolutionService();
 
             today = LocalDate.now();
 

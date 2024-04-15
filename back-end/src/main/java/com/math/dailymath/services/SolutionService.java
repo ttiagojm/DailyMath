@@ -19,12 +19,20 @@ public class SolutionService  {
      */
     public Solution getDailySolution(Connection conn, long idSolution) throws APIException, SQLException {
 
-        // Get DailySolution singleton instance
-        DailySolution solution = DailySolution.getDailySolution(conn);
+        try {
+            // Get DailySolution singleton instance
+            DailySolution solution = DailySolution.getDailySolution(conn);
 
-        // Actually Daily Solution
-        if(solution.getIdSolution() == idSolution)
-            return solution;
+            // Actually Daily Solution
+            if(solution.getIdSolution() == idSolution)
+                return solution;
+
+        } catch (APIException e){
+            // If for some reason  there are no new DailyExercise and 404 was returned
+            // just ignore APIException and get the solution by ID
+            if(e.getStatusCode() != 404)
+                throw e;
+        }
 
         // For users with out-dated exercise, get the solution for them
         return getSolution(conn, idSolution);

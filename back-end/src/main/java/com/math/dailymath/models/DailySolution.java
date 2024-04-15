@@ -16,6 +16,7 @@ public class DailySolution extends Solution {
 
     public static synchronized DailySolution getDailySolution(Connection conn) throws APIException {
         DailyExercise dailyExercise = DailyExercise.getDailyExercise(conn);
+
         // If doesn't exist solution or the solution changed, update it!
         if(solution == null || dailyExercise.getIdSolution() != solution.getIdSolution()){
             SolutionService solutionService = new SolutionService();
