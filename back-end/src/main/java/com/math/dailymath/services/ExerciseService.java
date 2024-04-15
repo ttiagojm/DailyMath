@@ -12,11 +12,12 @@ import java.util.Random;
 
 public class ExerciseService {
 
-    // Variables to keep daily exercise up to date
     private final MultipleChoiceService multipleChoiceService = new MultipleChoiceService();
-    private final LocalDate today = LocalDate.now();
-    private static DaoExercise exercise = null;
+    private final SolutionService solutionService = new SolutionService();
     private final Random rng = new Random();
+    private LocalDate today = LocalDate.now();
+
+    private static DaoExercise exercise = null;
 
     /**
      * Method get daily exercise
@@ -27,7 +28,9 @@ public class ExerciseService {
     public synchronized DaoExercise getExercise(Connection conn) throws ExerciseException {
         // Verify if the exercise needs to be changed
         if(exercise == null || today.isBefore(LocalDate.now())) {
-            ArrayList<Exercise> exercises = generateExercise(conn);
+            today = LocalDate.now();
+
+            ArrayList<Exercise> exercises = getExercises(conn);
 
             if(exercises.isEmpty()) {
                 System.err.println("No rows selected");
@@ -47,6 +50,9 @@ public class ExerciseService {
             } else{
                 exercise = new DaoExercise(ex);
             }
+
+            // Update Solution
+            solutionService.updateSolution(conn, ex.getIdSolution());
         }
         return exercise;
     }
@@ -83,7 +89,7 @@ public class ExerciseService {
      * @param conn - Database connection
      * @return
      */
-    private ArrayList<Exercise> generateExercise(Connection conn) throws ExerciseException {
+    private ArrayList<Exercise> getExercises(Connection conn) throws ExerciseException {
         System.out.println("Generating Exercise!");
         String query = "SELECT * FROM EXERCISE WHERE Done=false";
         ArrayList<Exercise> exercises = new ArrayList<>();

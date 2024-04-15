@@ -1,7 +1,11 @@
 package com.math.dailymath.models;
 
+import com.google.gson.annotations.Expose;
+
 public class Solution {
+    @Expose
     private long idSolution;
+    @Expose
     private String solution;
 
     public Solution(long idSolution, String solution) {
