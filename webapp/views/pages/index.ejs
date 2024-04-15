@@ -7,11 +7,13 @@
         <div class="row">
           <div class="col-12 text-center mt-5">
             <h1 class="display-3">DailyMath</h1>
+            <hr style="background-color: #fff;">
+            <br>
             <p class="lead"><%= exercise %></p>
-            <button class="btn btn-sm transparent-btn ml-2 float-left">Preview</button>
+            <button id="previewButton" class="btn btn-sm transparent-btn ml-2 float-left">Preview</button>
             <button class="btn btn-sm transparent-btn ml-2 float-left">Solution</button>
-            <textarea class="form-control" rows="3" style="background-color: #000; color: #fff;"></textarea>
-            
+            <textarea id="exerciseText" class="form-control" rows="3" style="background-color: #000; color: #fff;"></textarea>
+            <p id="preview" class="lead"></p>
           </div>
         </div>
     </div>
