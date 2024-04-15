@@ -42,7 +42,7 @@ public class DailyServlet extends HttpServlet {
             PrintWriter printWriter = resp.getWriter();
 
             // Thread Safety guaranteed because getExercise is sync
-            String exerciseString = gson.toJson(exerciseService.getExercise(conn));
+            String exerciseString = gson.toJson(exerciseService.getDailyExercise(conn));
             printWriter.print(exerciseString);
             printWriter.close();
             resp.setStatus(200);

@@ -36,7 +36,7 @@ public class SolutionService  {
         }
     }
 
-    public synchronized void updateSolution(Connection conn, long idSolution) throws ExerciseException {
+    public synchronized void updateDailySolution(Connection conn, long idSolution) throws ExerciseException {
         System.out.println("Updating Solution!");
         solution = getSolution(conn, idSolution);
     }

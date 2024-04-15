@@ -17,6 +17,7 @@ public class ExerciseService {
     private final Random rng = new Random();
     private LocalDate today = LocalDate.now();
 
+    // Exercise should be the same for everyone (that's why it's static)
     private static DaoExercise exercise = null;
 
     /**
@@ -25,7 +26,7 @@ public class ExerciseService {
      * @return
      * @throws ExerciseException
      */
-    public synchronized DaoExercise getExercise(Connection conn) throws ExerciseException {
+    public synchronized DaoExercise getDailyExercise(Connection conn) throws ExerciseException {
         // Verify if the exercise needs to be changed
         if(exercise == null || today.isBefore(LocalDate.now())) {
             today = LocalDate.now();
@@ -52,7 +53,7 @@ public class ExerciseService {
             }
 
             // Update Solution
-            solutionService.updateSolution(conn, ex.getIdSolution());
+            solutionService.updateDailySolution(conn, ex.getIdSolution());
         }
         return exercise;
     }
