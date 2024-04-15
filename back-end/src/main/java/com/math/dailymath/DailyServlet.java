@@ -2,7 +2,7 @@ package com.math.dailymath;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.math.dailymath.errors.ExerciseException;
+import com.math.dailymath.errors.APIException;
 import com.math.dailymath.services.ExerciseService;
 import com.math.dailymath.utils.Utils;
 
@@ -47,7 +47,7 @@ public class DailyServlet extends HttpServlet {
             printWriter.close();
             resp.setStatus(200);
 
-        } catch (ExerciseException e) {
+        } catch (APIException e) {
             resp.setStatus(e.getStatusCode());
         } catch (SQLException e){
             System.out.println("SQL error: " + e.getMessage());

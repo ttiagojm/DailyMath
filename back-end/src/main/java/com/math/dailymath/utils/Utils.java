@@ -7,7 +7,7 @@ import java.sql.SQLException;
 /** Class with helper functions */
 public class Utils {
     /** Method which creates a Database Connection */
-    public static Connection getConnection() {
+    public static Connection getConnection() throws SQLException {
         // Configure shared variable and Database connection
         String database = System.getenv("POSTGRES_DB");
         String user = System.getenv("POSTGRES_USER");
@@ -24,8 +24,9 @@ public class Utils {
             );
             System.out.println("CREATED DATABASE CONNECTION");
             return conn;
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+
+        } catch (ClassNotFoundException e) {
+            throw new SQLException(e.getMessage());
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.math.dailymath.services;
 
-import com.math.dailymath.errors.ExerciseException;
+import com.math.dailymath.errors.APIException;
 import com.math.dailymath.models.MultipleChoice;
 
 
@@ -8,7 +8,7 @@ import java.sql.*;
 
 public class MultipleChoiceService {
 
-    public synchronized MultipleChoice getMultipleChoice(Connection conn, long IdExercise) throws ExerciseException {
+    public MultipleChoice getMultipleChoice(Connection conn, long IdExercise) throws APIException {
         System.out.println("Getting Multiple Choice Options!");
         String query = "SELECT Options FROM MULTIPLE_CHOICE WHERE Id_Exercise=?";
 
@@ -28,7 +28,7 @@ public class MultipleChoiceService {
 
         } catch (SQLException e){
             System.err.println(e.getMessage());
-            throw new ExerciseException(500, "Server Error!");
+            throw new APIException(500, "Server Error!");
         }
     }
 }

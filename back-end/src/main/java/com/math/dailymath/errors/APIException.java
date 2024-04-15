@@ -1,8 +1,8 @@
 package com.math.dailymath.errors;
 
-public class ExerciseException extends Exception{
+public class APIException extends Exception{
     private final int statusCode;
-    public ExerciseException(int statusCode, String errorMessage){
+    public APIException(int statusCode, String errorMessage){
         super(errorMessage);
         this.statusCode = statusCode;
     }

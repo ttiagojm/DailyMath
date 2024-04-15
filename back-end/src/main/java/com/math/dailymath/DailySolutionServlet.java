@@ -2,7 +2,7 @@ package com.math.dailymath;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.math.dailymath.errors.ExerciseException;
+import com.math.dailymath.errors.APIException;
 import com.math.dailymath.services.SolutionService;
 import com.math.dailymath.utils.Utils;
 
@@ -17,8 +17,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(name="SolutionServlet", urlPatterns = "/solution")
-public class SolutionServlet extends HttpServlet {
+@WebServlet(name="DailySolutionServlet", urlPatterns = "/dailysolution")
+public class DailySolutionServlet extends HttpServlet {
     @Override
     public void init() throws ServletException {
         ServletContext ctx = getServletContext();
@@ -42,12 +42,12 @@ public class SolutionServlet extends HttpServlet {
             PrintWriter printWriter = resp.getWriter();
 
             // Thread Safety guaranteed because getSolution is sync
-            String exerciseString = gson.toJson(solutionService.getSolution(conn, idSolution));
+            String exerciseString = gson.toJson(solutionService.getDailySolution(conn, idSolution));
             printWriter.print(exerciseString);
             printWriter.close();
             resp.setStatus(200);
 
-        } catch (ExerciseException e) {
+        } catch (APIException e) {
             resp.setStatus(e.getStatusCode());
         } catch (SQLException e){
             System.out.println("SQL error: " + e.getMessage());
