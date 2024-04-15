@@ -1,22 +1,28 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
     <%- include('../partials/head'); %>
-<body>
-    <div class="container">
-        <div class="row">
-          <div class="col-12 text-center mt-5">
-            <h1 class="display-3">DailyMath</h1>
-            <hr style="background-color: #fff;">
-            <br>
-            <p class="lead"><%= exercise %></p>
-            <button id="previewButton" class="btn btn-sm transparent-btn ml-2 float-left">Preview</button>
-            <button class="btn btn-sm transparent-btn ml-2 float-left">Solution</button>
-            <textarea id="exerciseText" class="form-control" rows="3" style="background-color: #000; color: #fff;"></textarea>
-            <p id="preview" class="lead"></p>
-          </div>
+      <p class="lead"><%= exercise %></p>
+      
+      <% if(options == null) { %>
+        <button id="previewButton" class="btn btn-sm transparent-btn ml-2 float-left">Preview</button>
+        <textarea id="exerciseText" class="form-control" rows="3" style="background-color: #000; color: #fff;"></textarea>
+        <p id="preview" class="lead"></p>
+      <% } else { %>
+        <div id="cardContainer" class="row">
+            <% for (let i = 0; i < options.length; i++) { %>
+            <div class="col-md-6 mb-4">
+                <div class="card custom-card">
+                    <div class="card-body">
+                        <input type="radio" name="cardSelection" value=<%= i+1 %>>
+                        <label><%= options[i] %></label>
+                    </div>
+                </div>
+            </div>
+            <% } %>
         </div>
-    </div>
+      <% } %>
+      <button id="submitBtn" class="btn btn-sm send-btn ml-2">Send and check solution</button>
+      <br>
     <%- include('../partials/footer'); %>
 </body>
 </html>

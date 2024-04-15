@@ -41,4 +41,22 @@ Then we can calculate the integral of this function using two integrals, one for
 $\int_{2}^{3} x-2 dx + \int_{2}^{0} 2-x dx = [\frac{x^2}{2}-2x]_{2}^{3} + [2x-\frac{x^2}{2}]_{0}^{2} = \frac{3^2}{2}-2 \cdot 3 - (\frac{2^2}{2}-2 \cdot 2) + 2 \cdot 2 - \frac{2^2}{2} - (2 \cdot 0-\frac{0^2}{2}) = 2.5$');
 
 INSERT INTO EXERCISE (Id_Solution, Type_ex, Source, Exercise, Is_multiple)
-VALUES (1, 'Cálculo', 'https://andymath.com/', 'Calculate: $\int_{0}_{3} |x-2| dx$', false);
+VALUES (1, 'Calculus', 'https://andymath.com/', 'Calculate: $\int_{0}_{3} |x-2| dx$', false);
+
+
+
+INSERT INTO SOLUTION (Id_Solution, Solution)
+VALUES (2,
+'We have: $\frac{x+y+z+w}{4} = 14 \implies x+y+z+w = 14 \times 4 = 56$
+
+And we have: $\frac{x+z}{2} = 10 \implies x+z = 10 \times 2 = 20$
+
+Then: $(x+y+z+w) - (x+z) = 56 - 20 = 36 \implies y+w = 36$, so $\frac{y+w}{2} = \frac{36}{2} = 18$
+
+Answer: 4');
+INSERT INTO EXERCISE (Id_Exercise, Id_Solution, Type_ex, Source, Exercise, Is_multiple)
+VALUES (2, 2, 'Averages', 'https://andymath.com/',
+'If the average of $x,y,z,w$ is 14. The average of $x,z$ is 10.
+What is the average of $y,w$?', true);
+
+INSERT INTO MULTIPLE_CHOICE (Id_Exercise, Options) VALUES (2, '20,16,22,18');

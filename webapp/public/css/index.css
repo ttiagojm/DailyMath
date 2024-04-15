@@ -1,30 +1,61 @@
 body {
-    background-color: #000;
-    color: #fff;
-  }
-  .centered {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-  }
+  background-color: #000;
+  color: #fff;
+}
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+/* Define styles for footer */
+footer {
+  background-color: #333;
+  color: #fff;
+  padding: 10px 0;
+}
+
+/* Define styles for footer on larger screens (PC) */
+@media screen and (min-width: 768px) {
   footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #333;
-    color: #fff;
-    padding: 10px 0;
   }
-  /* Custom style for the transparent button */
-  .transparent-btn {
-    background-color: transparent;
-    border: 1px solid #fff;
-    color: #fff;
-    border-bottom: none;
-  }
-  .transparent-btn:hover {
-    background-color: #fff;
-    color: #000;
-  }
+}
+/* Custom style for the transparent button */
+.transparent-btn {
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+  border-bottom: none;
+}
+
+.send-btn {
+  background-color: transparent;
+  border: 1px solid #fff;
+  color: #fff;
+}
+
+.transparent-btn:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+.send-btn:hover {
+  background-color: #fff;
+  color: #000;
+}
+
+  /* Custom CSS for card styling */
+.custom-card {
+  background-color: black;
+  border-color: white;
+  color: white;
+}
+
+.custom-card .card-body {
+  padding: 20px; /* Adjust padding as needed */
+}
