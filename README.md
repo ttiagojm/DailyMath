@@ -4,7 +4,7 @@ It's a webapp which will show a new math problem everyday. Exercises could be ab
 # Create Database
 For creating your database using Docker:
 
-* Open your terminal inside `back-end`
+* Open your terminal inside `api`
 * Run `docker-compose build && docker-compose up -d` 
 * Voilá! Your database is created and working!
 
