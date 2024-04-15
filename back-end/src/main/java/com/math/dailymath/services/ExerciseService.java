@@ -1,18 +1,21 @@
 package com.math.dailymath.services;
 
+import com.math.dailymath.dao.DaoExercise;
 import com.math.dailymath.errors.ExerciseException;
 import com.math.dailymath.models.Exercise;
+import com.math.dailymath.models.MultipleChoice;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class ServiceExercise {
+public class ExerciseService {
 
     // Variables to keep daily exercise up to date
-    private static final LocalDate today = LocalDate.now();
-    private static Exercise exercise = null;
+    private final MultipleChoiceService multipleChoiceService = new MultipleChoiceService();
+    private final LocalDate today = LocalDate.now();
+    private static DaoExercise exercise = null;
     private final Random rng = new Random();
 
     /**
@@ -21,21 +24,29 @@ public class ServiceExercise {
      * @return
      * @throws ExerciseException
      */
-    public Exercise getExercise(Connection conn) throws ExerciseException {
+    public synchronized DaoExercise getExercise(Connection conn) throws ExerciseException {
         // Verify if the exercise needs to be changed
         if(exercise == null || today.isBefore(LocalDate.now())) {
             ArrayList<Exercise> exercises = generateExercise(conn);
 
             if(exercises.isEmpty()) {
                 System.err.println("No rows selected");
-                throw new ExerciseException(500, "Server error!");
+                throw new ExerciseException(404, "No daily exercise was found!");
             }
             // Select a random exercise from 0 to last index of exercises (nextInt upper bound is exclusive)
             int index = rng.nextInt(exercises.size());
-            exercise = exercises.get(index);
+            Exercise ex = exercises.get(index);
 
             // Update Exercise as Done (selected)
-            markExerciseDone(conn, exercise);
+            markExerciseDone(conn, ex);
+
+            // Verify if it's multiple choice
+            if(ex.isMultiple()){
+                MultipleChoice mChoice = multipleChoiceService.getMultipleChoice(conn, ex.getIdExercise());
+                exercise = new DaoExercise(ex, mChoice);
+            } else{
+                exercise = new DaoExercise(ex);
+            }
         }
         return exercise;
     }

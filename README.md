@@ -8,6 +8,17 @@ For creating your database using Docker:
 * Run `docker-compose build && docker-compose up -d` 
 * Voilá! Your database is created and working!
 
+
+# API
+The API has 5 environment variables:
+
+* POSTGRES_USER: User of the database
+* POSTGRES_PASSWORD: Password to access database
+* POSTGRES_DB: Database name
+* SECRET: 32 bit random string for JWT
+
+It's important to know that sign issuer is "dailymath".
+
 # Credits
 5 people made this project possible, each of them with differente tasks and experience but all helped. Let's credit them!
 
