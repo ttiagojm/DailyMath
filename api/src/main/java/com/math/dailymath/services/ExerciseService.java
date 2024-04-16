@@ -1,6 +1,7 @@
 package com.math.dailymath.services;
 
 import com.math.dailymath.dao.DailyExercise;
+import com.math.dailymath.dao.DaoExercise;
 import com.math.dailymath.errors.APIException;
 import com.math.dailymath.models.Exercise;
 
@@ -88,5 +89,11 @@ public class ExerciseService {
         }
 
         return exercises;
+    }
+
+    public DaoExercise insertExercise(Connection conn, DaoExercise daoExercise){
+        System.out.println("Inserting Exercise!");
+        String query = "INSERT INTO EXERCISE (Exercise,Type_ex,Source,is_Multiple, is_Done) " +
+                "VALUES (?,?,?,?, false)";
     }
 }

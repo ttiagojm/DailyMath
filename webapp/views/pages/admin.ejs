@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <%- include('../partials/head'); %>
+    <div class="row">
+        <div class="col-12 text-center mt-5">
+            <br>
+            <div class="card custom-card">
+                <div class="card-body">
+                    <h5 class="card-title">Add Exercise</h5>
+                    <form id="exerciseForm">
+                        <div class="form-group custom-input">
+                            <label for="exercise">Exercise</label>
+                            <textarea class="form-control" id="exercise" required></textarea>
+                        </div>
+                        <div class="form-group custom-input">
+                            <label for="source">Source</label>
+                            <input type="text" class="form-control" id="source" required>
+                        </div>
+                        <div class="form-group custom-input">
+                            <label for="type">Type</label>
+                            <input type="text" class="form-control" id="type" required>
+                        </div>
+                        <button type="submit" class="btn btn-sm send-btn ml-2">Add Exercise</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center mt-5">
+            <br>
+            <div id="cardContainer" class="row">
+                <% for (let i = 0; i < options.length; i++) { %>
+                <div class="col-md-6 mb-4">
+                    <div class="card custom-card">
+                        <div class="card-body">
+                            <input type="radio" name="cardSelection" value=<%= i+1 %>>
+                            <label><%= options[i] %></label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <%- include('../partials/footer'); %>
+    <script src="js/admin.js"></script>
+</body>
+</html>

@@ -59,3 +59,8 @@ footer {
 .custom-card .card-body {
   padding: 20px; /* Adjust padding as needed */
 }
+
+.custom-input{
+  max-width: 300px;
+  margin: 0 auto;
+}
