@@ -6,7 +6,6 @@ import com.math.dailymath.errors.APIException;
 import com.math.dailymath.services.SolutionService;
 import com.math.dailymath.utils.Utils;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -19,22 +18,15 @@ import java.sql.SQLException;
 
 @WebServlet(name="DailySolutionServlet", urlPatterns = "/dailysolution")
 public class DailySolutionServlet extends HttpServlet {
-    @Override
-    public void init() throws ServletException {
-        ServletContext ctx = getServletContext();
-        ctx.setAttribute("solutionService", new SolutionService());
-
-        super.init();
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         long idSolution = Long.parseLong(req.getParameter("idSolution"));
+
+        SolutionService solutionService = new SolutionService();
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();
-        ServletContext ctx = getServletContext();
-        SolutionService solutionService = (SolutionService) ctx.getAttribute("solutionService");
 
         try (Connection conn = Utils.getConnection()) {
             resp.setContentType("application/json");

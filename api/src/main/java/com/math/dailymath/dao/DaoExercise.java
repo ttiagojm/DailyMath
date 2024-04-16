@@ -1,7 +1,6 @@
 package com.math.dailymath.dao;
 
 import com.google.gson.annotations.Expose;
-import com.math.dailymath.DailyServlet;
 import com.math.dailymath.models.Exercise;
 import com.math.dailymath.models.MultipleChoice;
 

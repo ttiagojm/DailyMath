@@ -34,7 +34,7 @@ public class DailyExercise extends DaoExercise {
             today = LocalDate.now();
 
             // Obtain all the not Done exercises
-            ArrayList<Exercise> exercises = exerciseService.getExercisesDone(conn, false);
+            ArrayList<Exercise> exercises = exerciseService.getExercises(conn, false);
 
             if(exercises.isEmpty()) {
                 System.err.println("No rows selected");
@@ -47,7 +47,7 @@ public class DailyExercise extends DaoExercise {
             Exercise ex = exercises.get(index);
 
             // Update Exercise as Done (selected)
-            exerciseService.markExerciseDone(conn, ex);
+            exerciseService.markExerciseDone(conn, ex.getIdExercise());
 
             // Verify if it's multiple choice
             if(ex.isMultiple()){

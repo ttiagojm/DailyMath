@@ -6,7 +6,6 @@ import com.math.dailymath.errors.APIException;
 import com.math.dailymath.services.ExerciseService;
 import com.math.dailymath.utils.Utils;
 
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -21,17 +20,8 @@ import java.sql.SQLException;
 public class DailyServlet extends HttpServlet {
 
     @Override
-    public void init() throws ServletException {
-        ServletContext ctx = getServletContext();
-        ctx.setAttribute("exerciseService",  new ExerciseService());
-
-        super.init();
-    }
-
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
-        ServletContext  ctx = getServletContext();
-        ExerciseService exerciseService = (ExerciseService) ctx.getAttribute("exerciseService");
+        ExerciseService exerciseService = new ExerciseService();
         Gson gson = new GsonBuilder()
                 .excludeFieldsWithoutExposeAnnotation()
                 .create();

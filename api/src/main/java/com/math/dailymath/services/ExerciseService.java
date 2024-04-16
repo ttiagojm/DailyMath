@@ -1,9 +1,9 @@
 package com.math.dailymath.services;
 
 import com.math.dailymath.dao.DailyExercise;
-import com.math.dailymath.dao.DaoExercise;
 import com.math.dailymath.errors.APIException;
 import com.math.dailymath.models.Exercise;
+import com.math.dailymath.utils.Utils;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,6 +15,7 @@ public class ExerciseService {
 
     /**
      * Method get daily exercise
+     *
      * @param conn
      * @return
      * @throws APIException
@@ -27,46 +28,62 @@ public class ExerciseService {
     /**
      * Method to update exercise to be done
      * @param conn
-     * @param ex
+     * @param idExercise
      * @throws APIException
      */
-    public void markExerciseDone(Connection conn, Exercise ex) throws APIException {
+    public void markExerciseDone(Connection conn, long idExercise) throws APIException {
         System.out.println("Marking Exercise as 'Done'!");
         String query = "UPDATE EXERCISE SET Done=true WHERE Id_Exercise=?";
-        int affectedRows;
 
-        try{
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            int affectedRows = Utils.executeUpdate(pstmt, idExercise);
 
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setLong(1, ex.getIdExercise());
-            affectedRows = pstmt.executeUpdate();
+            // Should be updated since exercises exists
+            if (affectedRows == 0)
+                throw new SQLException("Affected 0 rows");
 
-           // Should be updated since exercises exists
-           if(affectedRows == 0)
-               throw new SQLException("Affected 0 rows");
-
-        } catch (SQLException e){
-            System.err.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
             throw new APIException(500, "Server error!");
         }
     }
 
     /**
-     * Method to get a new exercise from DB
-     * @param conn - Database connection
+     * Method to get ALL exercises
+     * @param conn
      * @return
+     * @throws APIException
      */
-    public ArrayList<Exercise> getExercisesDone(Connection conn, boolean done) throws APIException {
-        System.out.println("Generating Exercise!");
-        String query = "SELECT * FROM EXERCISE WHERE Done=?";
+    public ArrayList<Exercise> getExercises(Connection conn) throws APIException {
+        return getAllExercises(conn, "SELECT * FROM EXERCISE WHERE");
+    }
+
+    /**
+     * Method to get exercise done XOR not done
+     * @param conn
+     * @param done
+     * @return
+     * @throws APIException
+     */
+    public ArrayList<Exercise> getExercises(Connection conn, boolean done) throws APIException {
+        return getAllExercises(conn, "SELECT * FROM EXERCISE WHERE Done=?", done);
+    }
+
+    /**
+     * Method to get exercises
+     * @param conn
+     * @param params
+     * @return
+     * @throws APIException
+     */
+    private ArrayList<Exercise> getAllExercises(Connection conn, String query, Object... params) throws APIException {
+        System.out.println("Getting all exercises");
         ArrayList<Exercise> exercises = new ArrayList<>();
 
-        try{
-            PreparedStatement pstmt = conn.prepareStatement(query);
-            pstmt.setBoolean(1, done);
-            ResultSet res = pstmt.executeQuery();
+        try (PreparedStatement pstmt = conn.prepareStatement(query)) {
+            ResultSet res = Utils.executeQuery(pstmt, params);
 
-            while(res.next()){
+            while (res.next()) {
                 int idExercise = res.getInt("Id_Exercise");
                 int idSolution = res.getInt("Id_Solution");
                 String typeExercise = res.getString("Type_ex");
@@ -80,20 +97,10 @@ public class ExerciseService {
                 );
             }
 
-            res.close();
-            pstmt.close();
-
-        } catch (SQLException e){
-            System.err.println(e.getMessage());
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
             throw new APIException(500, "Server Error!");
         }
-
         return exercises;
-    }
-
-    public DaoExercise insertExercise(Connection conn, DaoExercise daoExercise){
-        System.out.println("Inserting Exercise!");
-        String query = "INSERT INTO EXERCISE (Exercise,Type_ex,Source,is_Multiple, is_Done) " +
-                "VALUES (?,?,?,?, false)";
     }
 }

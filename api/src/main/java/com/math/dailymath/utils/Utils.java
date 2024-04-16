@@ -1,8 +1,6 @@
 package com.math.dailymath.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
 
 /** Class with helper functions */
 public class Utils {
@@ -27,6 +25,22 @@ public class Utils {
 
         } catch (ClassNotFoundException e) {
             throw new SQLException(e.getMessage());
+        }
+    }
+
+    public static int executeUpdate(PreparedStatement pstmt, Object... params) throws SQLException {
+        setParameters(pstmt, params);
+        return pstmt.executeUpdate();
+    }
+
+    public static ResultSet executeQuery(PreparedStatement pstmt, Object... params) throws SQLException {
+        setParameters(pstmt, params);
+        return pstmt.executeQuery();
+    }
+
+    private static void setParameters(PreparedStatement pstmt, Object... params) throws SQLException {
+        for(int i = 0; i < params.length; i++){
+            pstmt.setObject(i+1, params[i]);
         }
     }
 }
