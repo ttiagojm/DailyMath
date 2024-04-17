@@ -9,10 +9,7 @@ import com.math.dailymath.models.MultipleChoice;
 import com.math.dailymath.models.Solution;
 import com.math.dailymath.utils.Utils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -31,17 +28,29 @@ public class ExerciseService {
     }
 
     /**
+     * Mehtod to update the Done column of some exercises
+     * @param conn
+     * @param exercises
+     * @throws APIException
+     */
+    public void markExercisesDone(Connection conn, ArrayList<Exercise> exercises) throws APIException {
+        for(Exercise exercise: exercises){
+            markExerciseDone(conn, exercise.getIdExercise(), exercise.isDone());
+        }
+    }
+
+    /**
      * Method to update exercise to be done
      * @param conn
      * @param idExercise
      * @throws APIException
      */
-    public void markExerciseDone(Connection conn, long idExercise) throws APIException {
+    public void markExerciseDone(Connection conn, long idExercise, boolean done) throws APIException {
         System.out.println("Marking Exercise as 'Done'!");
-        String query = "UPDATE EXERCISE SET Done=true WHERE Id_Exercise=?";
+        String query = "UPDATE EXERCISE SET Done=? WHERE Id_Exercise=?";
 
         try (PreparedStatement pstmt = conn.prepareStatement(query)) {
-            int affectedRows = Utils.executeUpdate(pstmt, idExercise);
+            int affectedRows = Utils.executeUpdate(pstmt, done, idExercise);
 
             // Should be updated since exercises exists
             if (affectedRows == 0)
@@ -60,7 +69,7 @@ public class ExerciseService {
      * @throws APIException
      */
     public ArrayList<Exercise> getExercises(Connection conn) throws APIException {
-        return getAllExercises(conn, "SELECT * FROM EXERCISE WHERE");
+        return getAllExercises(conn, "SELECT * FROM EXERCISE");
     }
 
     /**
@@ -127,15 +136,20 @@ public class ExerciseService {
             throw new APIException(400, "Missing fields");
         }
 
+        // Make sure the options are valid
+        boolean isMultiple = false;
+        if(json.has("options")){
+            isMultiple = json.get("options").getAsString().split(",").length == 4;
+        }
+
         // Insert them in database
         SolutionService solutionService = new SolutionService();
         Solution solution = solutionService.insertSolution(conn, json.get("solution").getAsString());
 
-        boolean isMultiple = json.has("options");
         String exerciseStr = json.get("exercise").getAsString();
         String source = json.get("source").getAsString();
         String typeExercise = json.get("typeExercise").getAsString();
-        Exercise exercise = insertExercise(conn, exerciseStr, source, typeExercise, isMultiple);
+        Exercise exercise = insertExercise(conn, solution.getIdSolution(), exerciseStr, source, typeExercise, isMultiple);
         DaoExercise daoExercise = new DaoExercise(exercise, solution);
 
         if(isMultiple){
@@ -157,17 +171,19 @@ public class ExerciseService {
      * @return
      * @throws APIException
      */
-    private Exercise insertExercise(Connection conn, String exercise, String source, String typeExercise, boolean isMultiple) throws APIException {
+    private Exercise insertExercise(Connection conn, long idSolution, String exercise, String source, String typeExercise, boolean isMultiple) throws APIException {
         System.out.println("Inserting Exercise!");
-        String query = "INSERT INTO EXERCISE (Exercise, Source, Type_ex) VALUES (?)";
+        String query = "INSERT INTO EXERCISE (Id_Solution, Exercise, Source, Type_ex, Is_Multiple) VALUES (?,?,?,?,?)";
 
-        try(PreparedStatement pstmt = conn.prepareStatement(query)){
-            ResultSet res = Utils.executeQuery(pstmt, exercise, source, typeExercise);
-            res.next();
-            long idExercise = res.getLong("Id_Exercise");
-            long idSolution = res.getLong("Id_Solution");
-            boolean isDone = res.getBoolean("Is_Done");
-            return new Exercise(idExercise, idSolution, exercise, source, typeExercise, isMultiple, isDone);
+        try(PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+            Utils.executeUpdate(pstmt, idSolution, exercise, source, typeExercise, isMultiple);
+
+            // Get primary key generated
+            ResultSet genKeys = pstmt.getGeneratedKeys();
+            genKeys.next();
+
+            long idExercise = genKeys.getLong(1);
+            return new Exercise(idExercise, idSolution, exercise, source, typeExercise, isMultiple, false);
 
         } catch (SQLException e) {
             e.printStackTrace(System.err);

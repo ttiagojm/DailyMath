@@ -38,10 +38,14 @@ public class SolutionService  {
         System.out.println("Inserting Solution!");
         String query = "INSERT INTO SOLUTION (solution) VALUES (?)";
 
-        try(PreparedStatement pstmt = conn.prepareStatement(query)){
-            ResultSet res = Utils.executeQuery(pstmt, solution);
-            res.next();
-            long idSolution = res.getLong("Id_Solution");
+        try(PreparedStatement pstmt = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)){
+            Utils.executeUpdate(pstmt, solution);
+
+            // Get the primary key created
+            ResultSet genKeys = pstmt.getGeneratedKeys();
+            genKeys.next();
+
+            long idSolution = genKeys.getLong(1);
             return new Solution(idSolution, solution);
 
         } catch (SQLException e) {

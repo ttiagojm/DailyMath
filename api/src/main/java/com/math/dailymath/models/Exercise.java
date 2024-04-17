@@ -3,6 +3,7 @@ package com.math.dailymath.models;
 import com.google.gson.annotations.Expose;
 
 public class Exercise {
+    @Expose
     private long idExercise;
     @Expose
     private long idSolution;
@@ -14,6 +15,7 @@ public class Exercise {
     private String exercise;
     @Expose
     private boolean isMultiple;
+    @Expose
     private boolean isDone;
 
     public Exercise(long idExercise, long idSolution, String typeExercise,

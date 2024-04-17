@@ -50,7 +50,7 @@ public class DailyExercise extends DaoExercise {
             Exercise ex = exercises.get(index);
 
             // Update Exercise as Done (selected)
-            exerciseService.markExerciseDone(conn, ex.getIdExercise());
+            exerciseService.markExerciseDone(conn, ex.getIdExercise(), true);
 
             // Get Solution
             Solution solution = solutionService.getSolution(conn, ex.getIdSolution());

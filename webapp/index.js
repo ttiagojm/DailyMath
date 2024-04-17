@@ -4,6 +4,7 @@ const path = require("path");
 const axios = require("axios");
 const jwt = require("jsonwebtoken");
 const utils = require("./utils");
+const { error } = require("console");
 
 const app = express();
 const port = process.env.PORT | 3000;
@@ -49,12 +50,13 @@ app.get("/", (req, res) => {
             source: resp.data.source,
             typeExercise: resp.data.typeExercise
         });
+    })
+    .catch(error => {
+        console.log(error.response.status);
     });
 });
 
 app.post("/solution", (req, res) => {
-    const token = jwt.sign({iss: "dailymath"}, process.env.SECRET);
-
     if(req.session.exercise == undefined){
         res.sendStatus(400);
     } else if(req.session.exercise.options == undefined){
@@ -82,17 +84,72 @@ app.get("/admin", (req, res) => {
     if(req.session.user == undefined){
         res.redirect("/login");
     } else{
-        res.render("pages/admin", {
-            exercises: null
-        });
+        const token = jwt.sign({iss: "dailymath"}, process.env.SECRET);
+        
+        axios.get(`${process.env.API}/exercises`, {headers: {Authorization: `Bearer ${token}`}})
+        .then(response => {
+            req.session.exercises = response.data
+            
+            // generate a random ID 
+            req.session.exercises.forEach(element => {
+                element.id = crypto.randomUUID();
+            });
+
+            res.render("pages/admin", {
+                exercises: req.session.exercises ? req.session.exercises: null
+            });
+        })
+        .catch(error => {
+            console.log(error.response.status);
+        });  
     }
 })
 
 app.post("/add", (req, res) => {
     const token = jwt.sign({iss: "dailymath"}, process.env.SECRET);
 
-    
+    axios.post(`${process.env.API}/add`, req.body, {
+        headers: {Authorization: `Bearer ${token}`},
+    })
+    .then(response => {
+        return res.sendStatus(200);
+
+    })
+    .catch(error => {
+        console.log(error.response.status);
+    });
 })
+
+app.post("/exercises/done", (req, res) => {
+    const token = jwt.sign({iss: "dailymath"}, process.env.SECRET);
+    exercises = [];
+
+    req.body.ids.forEach(el => {
+        const ex = req.session.exercises.find(ex => ex.id == el.id);
+        console.log(el.isDone)
+        console.log(ex.isDone)
+
+        // Only send valid exercises and those which done value changed
+        if(ex && el.isDone != ex.isDone){
+            delete ex.id;
+            ex.isDone = el.isDone;
+            exercises.push(ex);
+        }
+    });
+
+    console.log(exercises);
+
+    axios.post(`${process.env.API}/exercises/done`, exercises, {
+        headers: {Authorization: `Bearer ${token}`},
+    })
+    .then(response => {
+        return res.sendStatus(200);
+    })
+    .catch(error => {
+        console.log(error.response.status);
+    });
+    
+});
 
 app.listen(port, () => {
     console.log(`App running on port ${port}`);

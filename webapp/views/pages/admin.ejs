@@ -44,17 +44,24 @@
             <div id="cardContainer" class="row">
                 
                 <% for (let i = 0; i < exercises.length; i++) { %>
-                <div class="col-md-6 mb-4">
+                <div class="col-12 mb-4">
                     <div class="card custom-card">
                         <div class="card-body">
-                            <input type="radio" name="cardSelection" value=<%= i+1 %>>
-                            <label><%= exercises[i] %></label>
+                            <input hidden value="<%= exercises[i].id %>"/>
+                            <label style="display: block;"><%= exercises[i].typeExercise %></label>
+                            <input type="checkbox" name="cardSelection" <% if (exercises[i].isDone) { %>checked<% } %> >
+                            <label for="cardSelection">Done</label>
+                            <p><%= exercises[i].exercise.substring(0, 20) + (exercises[i].exercise.length > 20 ? '...' : '') %></p>
                         </div>
                     </div>
                 </div>
                 <% } %>
             </div>
             <% } %> 
+            <div class="col-sm-12 text-center"> <!-- Ensure the button stays centered -->
+                <button id="sendDoneExercises" class="btn btn-sm send-btn">Update Done</button>
+            </div>
+
         </div>
     </div>
 
