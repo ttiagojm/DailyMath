@@ -4,8 +4,10 @@ import com.math.dailymath.errors.APIException;
 import com.math.dailymath.models.MultipleChoice;
 import com.math.dailymath.utils.Utils;
 
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 public class MultipleChoiceService {
 
@@ -24,6 +26,22 @@ public class MultipleChoiceService {
             return new MultipleChoice(idMultiple, idExercise, options);
 
         } catch (SQLException e){
+            e.printStackTrace(System.err);
+            throw new APIException(500, "Server Error!");
+        }
+    }
+
+    public MultipleChoice insertMultipleChoice(Connection conn, long idExercise, String options) throws APIException {
+        System.out.println("Inserting MultipleChoice!");
+        String query = "INSERT INTO MULTIPLE_CHOICE (id_Exercise, Options) VALUES (?, ?)";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(query)){
+            ResultSet res = Utils.executeQuery(pstmt, idExercise, options);
+            res.next();
+            long idMultiple = res.getLong("id_Multiple");
+            return new MultipleChoice(idMultiple, idExercise, options);
+
+        } catch (SQLException e) {
             e.printStackTrace(System.err);
             throw new APIException(500, "Server Error!");
         }

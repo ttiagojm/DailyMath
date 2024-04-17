@@ -1,8 +1,12 @@
 package com.math.dailymath.services;
 
+import com.google.gson.JsonObject;
 import com.math.dailymath.dao.DailyExercise;
+import com.math.dailymath.dao.DaoExercise;
 import com.math.dailymath.errors.APIException;
 import com.math.dailymath.models.Exercise;
+import com.math.dailymath.models.MultipleChoice;
+import com.math.dailymath.models.Solution;
 import com.math.dailymath.utils.Utils;
 
 import java.sql.Connection;
@@ -10,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class ExerciseService {
 
@@ -90,10 +95,11 @@ public class ExerciseService {
                 String source = res.getString("Source");
                 String exerciseStr = res.getString("Exercise");
                 boolean isMultiple = res.getBoolean("Is_multiple");
+                boolean isDone = res.getBoolean("Done");
 
                 // Add exercise to list
                 exercises.add(
-                        new Exercise(idExercise, idSolution, typeExercise, source, exerciseStr, isMultiple)
+                        new Exercise(idExercise, idSolution, typeExercise, source, exerciseStr, isMultiple, isDone)
                 );
             }
 
@@ -102,5 +108,70 @@ public class ExerciseService {
             throw new APIException(500, "Server Error!");
         }
         return exercises;
+    }
+
+    /**
+     * Method to create an Exercise based on a JSON
+     * @param conn
+     * @param json
+     * @return
+     * @throws APIException
+     */
+    public DaoExercise createExercise(Connection conn, JsonObject json) throws APIException {
+        // Verify if all needed fields were passed
+        ArrayList<String> keys = new ArrayList<>(
+                Arrays.asList("exercise", "source", "typeExercise", "solution")
+        );
+
+        if(!Utils.hasAllKeys(json, keys)){
+            throw new APIException(400, "Missing fields");
+        }
+
+        // Insert them in database
+        SolutionService solutionService = new SolutionService();
+        Solution solution = solutionService.insertSolution(conn, json.get("solution").getAsString());
+
+        boolean isMultiple = json.has("options");
+        String exerciseStr = json.get("exercise").getAsString();
+        String source = json.get("source").getAsString();
+        String typeExercise = json.get("typeExercise").getAsString();
+        Exercise exercise = insertExercise(conn, exerciseStr, source, typeExercise, isMultiple);
+        DaoExercise daoExercise = new DaoExercise(exercise, solution);
+
+        if(isMultiple){
+            MultipleChoiceService mChoiceService = new MultipleChoiceService();
+            MultipleChoice mChoice = mChoiceService.insertMultipleChoice(conn, exercise.getIdExercise(), json.get("options").getAsString());
+            daoExercise = new DaoExercise(exercise, solution, mChoice);
+        }
+
+        return daoExercise;
+    }
+
+    /**
+     * Insert exercise on database
+     * @param conn
+     * @param exercise
+     * @param source
+     * @param typeExercise
+     * @param isMultiple
+     * @return
+     * @throws APIException
+     */
+    private Exercise insertExercise(Connection conn, String exercise, String source, String typeExercise, boolean isMultiple) throws APIException {
+        System.out.println("Inserting Exercise!");
+        String query = "INSERT INTO EXERCISE (Exercise, Source, Type_ex) VALUES (?)";
+
+        try(PreparedStatement pstmt = conn.prepareStatement(query)){
+            ResultSet res = Utils.executeQuery(pstmt, exercise, source, typeExercise);
+            res.next();
+            long idExercise = res.getLong("Id_Exercise");
+            long idSolution = res.getLong("Id_Solution");
+            boolean isDone = res.getBoolean("Is_Done");
+            return new Exercise(idExercise, idSolution, exercise, source, typeExercise, isMultiple, isDone);
+
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+            throw new APIException(500, "Server Error!");
+        }
     }
 }

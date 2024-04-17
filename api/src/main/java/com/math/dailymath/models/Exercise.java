@@ -17,13 +17,14 @@ public class Exercise {
     private boolean isDone;
 
     public Exercise(long idExercise, long idSolution, String typeExercise,
-                    String source, String exercise, boolean isMultiple) {
+                    String source, String exercise, boolean isMultiple, boolean isDone) {
         this.idExercise = idExercise;
         this.idSolution = idSolution;
         this.typeExercise = typeExercise;
         this.source = source;
         this.exercise = exercise;
         this.isMultiple = isMultiple;
+        this.isDone = isDone;
     }
 
     /** Getters and Setters */

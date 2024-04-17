@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    const form = document.getElementById('exerciseForm');
+    const exerciseForm = document.getElementById('exerciseForm');
 
-    form.addEventListener('submit', function(event) {
+    exerciseForm.addEventListener('submit', function(event) {
         event.preventDefault();
 
         // Get form values

@@ -58,33 +58,23 @@ app.post("/solution", (req, res) => {
     if(req.session.exercise == undefined){
         res.sendStatus(400);
     } else if(req.session.exercise.options == undefined){
-        axios.get(`${process.env.API}/dailysolution?idSolution=${req.session.exercise.idSolution}`, 
-                    {headers: {Authorization: `Bearer ${token}`}})
-        .then(resp => {
-            res.json({solution: resp.data.solution});
-        })
+        res.json({solution:  req.session.exercise.solution.solution});
     
     } else{
-        // get the solution and save it
-        axios.get(`${process.env.API}/dailysolution?idSolution=${req.session.exercise.idSolution}`, 
-                    {headers: {Authorization: `Bearer ${token}`}})
-        .then(resp => {
-            
-            // Get solution and index selected by the user
-            const words = resp.data.solution.split(" ");
-            const solution = parseInt(words[words.length-1]);
-            const option = parseInt(req.body.option)-1;
+        // Get solution and index selected by the user
+        const words = req.session.exercise.solution.solution.split(" ");
+        const solution = parseInt(words[words.length-1]);
+        const option = parseInt(req.body.option)-1;
 
-            if(option < 0 || option > req.session.exercise.options.length-1){
-                res.sendStatus(400);
+        if(option < 0 || option > req.session.exercise.options.length-1){
+            res.sendStatus(400);
+        } else{
+            if(parseInt(req.session.exercise.options[option]) == solution){
+                res.json({solution: req.session.exercise.solution.solution});
             } else{
-                if(parseInt(req.session.exercise.options[option]) == solution){
-                    res.json({solution: resp.data.solution});
-                } else{
-                    res.json({message: "Try again!"});
-                }
+                res.json({message: "Try again!"});
             }
-        });
+        }
     }
 });
 
@@ -92,7 +82,9 @@ app.get("/admin", (req, res) => {
     if(req.session.user == undefined){
         res.redirect("/login");
     } else{
-        res.render("pages/admin");
+        res.render("pages/admin", {
+            exercises: null
+        });
     }
 })
 

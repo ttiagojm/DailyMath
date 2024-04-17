@@ -16,8 +16,8 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@WebServlet(name="DailySolutionServlet", urlPatterns = "/dailysolution")
-public class DailySolutionServlet extends HttpServlet {
+@WebServlet(name="DailySolutionServlet", urlPatterns = "/solution")
+public class SolutionServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -34,7 +34,7 @@ public class DailySolutionServlet extends HttpServlet {
             PrintWriter printWriter = resp.getWriter();
 
             // Thread Safety guaranteed because getSolution is sync
-            String exerciseString = gson.toJson(solutionService.getDailySolution(conn, idSolution));
+            String exerciseString = gson.toJson(solutionService.getSolution(conn, idSolution));
             printWriter.print(exerciseString);
             printWriter.close();
             resp.setStatus(200);

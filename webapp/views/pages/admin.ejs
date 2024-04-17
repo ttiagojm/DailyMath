@@ -4,23 +4,33 @@
     <div class="row">
         <div class="col-12 text-center mt-5">
             <br>
-            <div class="card custom-card">
+            <div class="card custom-card border-0">
                 <div class="card-body">
                     <h5 class="card-title">Add Exercise</h5>
-                    <form id="exerciseForm">
-                        <div class="form-group custom-input">
+                    <form id="exerciseForm" class="row">
+                        <div class="col-sm-3 mb-2">
                             <label for="exercise">Exercise</label>
                             <textarea class="form-control" id="exercise" required></textarea>
                         </div>
-                        <div class="form-group custom-input">
+                        <div class="col-sm-3 mb-2">
                             <label for="source">Source</label>
                             <input type="text" class="form-control" id="source" required>
                         </div>
-                        <div class="form-group custom-input">
+                        <div class="col-sm-2 mb-2">
                             <label for="type">Type</label>
                             <input type="text" class="form-control" id="type" required>
                         </div>
-                        <button type="submit" class="btn btn-sm send-btn ml-2">Add Exercise</button>
+                        <div class="col-sm-2 mb-2">
+                            <label for="options">Options</label>
+                            <input type="text" class="form-control" id="options">
+                        </div>
+                        <div class="col-sm-2 mb-2">
+                            <label for="exercise">Solution</label>
+                            <textarea class="form-control" id="solution" required></textarea>
+                        </div>
+                        <div class="col-sm-12 text-center"> <!-- Ensure the button stays centered -->
+                            <button type="submit" class="btn btn-sm send-btn">Add Exercise</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -29,17 +39,22 @@
     <div class="row">
         <div class="col-12 text-center mt-5">
             <br>
+            <h5>Exercises</h5>
+            <% if(exercises != null) { %>
             <div id="cardContainer" class="row">
-                <% for (let i = 0; i < options.length; i++) { %>
+                
+                <% for (let i = 0; i < exercises.length; i++) { %>
                 <div class="col-md-6 mb-4">
                     <div class="card custom-card">
                         <div class="card-body">
                             <input type="radio" name="cardSelection" value=<%= i+1 %>>
-                            <label><%= options[i] %></label>
+                            <label><%= exercises[i] %></label>
                         </div>
                     </div>
                 </div>
+                <% } %>
             </div>
+            <% } %> 
         </div>
     </div>
 

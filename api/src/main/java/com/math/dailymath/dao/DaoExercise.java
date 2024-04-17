@@ -3,6 +3,7 @@ package com.math.dailymath.dao;
 import com.google.gson.annotations.Expose;
 import com.math.dailymath.models.Exercise;
 import com.math.dailymath.models.MultipleChoice;
+import com.math.dailymath.models.Solution;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +12,7 @@ public class DaoExercise {
     @Expose
     private long idExercise;
     @Expose
-    private long idSolution;
+    private Solution solution;
     @Expose
     private String typeExercise;
     @Expose
@@ -22,16 +23,16 @@ public class DaoExercise {
     private ArrayList<String> options;
 
 
-    public DaoExercise(Exercise exercise) {
+    public DaoExercise(Exercise exercise, Solution solution) {
         this.idExercise = exercise.getIdExercise();
-        this.idSolution = exercise.getIdSolution();
+        this.solution = solution;
         this.typeExercise = exercise.getTypeExercise();
         this.source = exercise.getSource();
         this.exercise = exercise.getExercise();
     }
 
-    public DaoExercise(Exercise exercise, MultipleChoice multipleChoice) {
-        this(exercise);
+    public DaoExercise(Exercise exercise, Solution solution, MultipleChoice multipleChoice) {
+        this(exercise, solution);
         String options = multipleChoice.getOptions();
         this.options = new ArrayList<>(Arrays.asList(options.split(",")));
     }
@@ -45,12 +46,12 @@ public class DaoExercise {
         this.idExercise = idExercise;
     }
 
-    public long getIdSolution() {
-        return idSolution;
+    public Solution getSolution() {
+        return solution;
     }
 
-    public void setIdSolution(long idSolution) {
-        this.idSolution = idSolution;
+    public void setSolution(Solution solution) {
+        this.solution = solution;
     }
 
     public String getTypeExercise() {

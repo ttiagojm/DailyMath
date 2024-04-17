@@ -1,6 +1,9 @@
 package com.math.dailymath.utils;
 
+import com.google.gson.JsonObject;
+
 import java.sql.*;
+import java.util.ArrayList;
 
 /** Class with helper functions */
 public class Utils {
@@ -28,11 +31,38 @@ public class Utils {
         }
     }
 
+    /**
+     * Verify if a JSONObject has a list of keys
+     * @param json
+     * @param keys
+     * @return
+     */
+    public static boolean hasAllKeys(JsonObject json, ArrayList<String> keys){
+        for(String k : keys){
+            if(!json.has(k)) return false;
+        }
+        return true;
+    }
+
+    /**
+     * Execute an update with an arbitrary number of parameters
+     * @param pstmt
+     * @param params
+     * @return
+     * @throws SQLException
+     */
     public static int executeUpdate(PreparedStatement pstmt, Object... params) throws SQLException {
         setParameters(pstmt, params);
         return pstmt.executeUpdate();
     }
 
+    /**
+     * Execute a query with an arbitrary number of parameters
+     * @param pstmt
+     * @param params
+     * @return
+     * @throws SQLException
+     */
     public static ResultSet executeQuery(PreparedStatement pstmt, Object... params) throws SQLException {
         setParameters(pstmt, params);
         return pstmt.executeQuery();
