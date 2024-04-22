@@ -57,6 +57,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/solution", (req, res) => {
+
     if(req.session.exercise == undefined){
         res.sendStatus(400);
     } else if(req.session.exercise.options == undefined){

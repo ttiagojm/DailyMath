@@ -18,7 +18,7 @@ footer {
 }
 
 /* Define styles for footer on larger screens (PC) */
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 1920px) {
   footer {
     position: fixed;
     bottom: 0;
